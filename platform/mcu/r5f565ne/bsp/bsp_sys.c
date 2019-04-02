@@ -173,9 +173,9 @@ void  BSP_SysInit (void)
     }
     
                                                                 /* --------------- SYSTEM CONFIGURATION --------------- */
-    SYSTEM.SCKCR.LONG = 0x21021122u;                            /*      - PCKD = PLL * 1/4 = 30 MHz.                    */
+    SYSTEM.SCKCR.LONG = 0x21021222u;                            /*      - PCKD = PLL * 1/4 = 30 MHz.                    */
                                                                 /*      - PCKC = PLL * 1/4 = 30 MHz.                    */
-                                                                /*      - PCKB = PLL * 1/2 = 60 MHz.                    */
+                                                                /*      - PCKB = PLL * 1/4 = 30 MHz.                    */
                                                                 /*      - PCKA = PLL * 1/2 = 60 MHz.                    */
                                                                 /*      - BCK  = PLL * 1/4 = 30 MHz.                    */
                                                                 /*      - ICK  = PLL * 1/2 = 60 MHz.                    */
@@ -244,7 +244,7 @@ uint32_t  BSP_SysPerClkFreqGet (void)
 
     }
 
-    pll_freq = BSP_CFG_SYS_EXT_CLK_FREQ * pll_stc /2/ pll_div;  //RX65N pll_stc is (.BIT.STC+1/2)
+    pll_freq = BSP_CFG_SYS_EXT_CLK_FREQ * pll_stc / pll_div;
     
     per_div  = SYSTEM.SCKCR.BIT.PCKB;
     
