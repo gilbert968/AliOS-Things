@@ -32,7 +32,7 @@
 #endif
 
 #ifndef WITH_MQTT_ZIP_TOPIC
-    #define WITH_MQTT_ZIP_TOPIC                 (1)
+    #define WITH_MQTT_ZIP_TOPIC                 (0)
 #endif
 
 #ifndef WITH_MQTT_SUB_LOCAL

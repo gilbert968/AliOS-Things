@@ -12,9 +12,9 @@
 #include "app_entry.h"
 
 #ifdef rx65n_rtb_demo
-#define PRODUCT_KEY             "a1I0E0DTnIT"
-#define DEVICE_NAME             "RTB_cloud_demo"
-#define DEVICE_SECRET           "wORI6Vpu4RzvjZQk8EdLK52VNSA0Qk26"
+#define PRODUCT_KEY             "mCGsVk5sk4G"
+#define DEVICE_NAME             "mCGsVk5sk4G"
+#define DEVICE_SECRET           "6jRW1Yf9Y2R1ylGYClU48aOXKLf40xNz"
 #define PRODUCT_SECRET          "KY8Xv2dA2JMKJrOg"
 #else
 #define PRODUCT_KEY             "a1MZxOdcBnO"
@@ -23,12 +23,12 @@
 #define DEVICE_SECRET           "t9GmMf2jb3LgWfXBaZD2r3aJrfVWBv56"
 #endif
 /* These are pre-defined topics */
-#define TOPIC_UPDATE            "/"PRODUCT_KEY"/"DEVICE_NAME"/user/update"
-#define TOPIC_ERROR             "/"PRODUCT_KEY"/"DEVICE_NAME"/user/update/error"
-#define TOPIC_GET               "/"PRODUCT_KEY"/"DEVICE_NAME"/user/get"
-#define TOPIC_DATA               "/"PRODUCT_KEY"/"DEVICE_NAME"/user/data"
+#define TOPIC_UPDATE            "/"PRODUCT_KEY"/"DEVICE_NAME"/update"
+#define TOPIC_ERROR             "/"PRODUCT_KEY"/"DEVICE_NAME"/update/error"
+#define TOPIC_GET               "/"PRODUCT_KEY"/"DEVICE_NAME"/get"
+#define TOPIC_DATA               "/"PRODUCT_KEY"/"DEVICE_NAME"/data"
 
-#define MQTT_MSGLEN             (1024)
+#define MQTT_MSGLEN            (2048)// (1024)
 
 #define EXAMPLE_TRACE(...)  \
     do { \
@@ -39,7 +39,8 @@
 
 static int      user_argc;
 static char   **user_argv;
-
+static int sub_counter = 0;
+static int pub_counter = 0;
 void event_handle(void *pcontext, void *pclient, iotx_mqtt_event_msg_pt msg)
 {
     uintptr_t packet_id = (uintptr_t)msg->msg;
@@ -136,7 +137,50 @@ static void _demo_message_arrive(void *pcontext, void *pclient, iotx_mqtt_event_
             break;
     }
 }
+static void mqtt_sub_callback(void *pcontext, void *pclient, iotx_mqtt_event_msg_pt msg)
+{
+	iotx_mqtt_topic_info_pt     ptopic_info = (iotx_mqtt_topic_info_pt) msg->msg;
+    iotx_mqtt_topic_info_t 		topic_msg;
+    switch (msg->event_type) {
+        case IOTX_MQTT_EVENT_PUBLISH_RECEIVED:
+            /* print topic name and topic message */
+            EXAMPLE_TRACE("----");
+            EXAMPLE_TRACE("PacketId: %d", ptopic_info->packet_id);
+            EXAMPLE_TRACE("Topic: '%.*s' (Length: %d)",
+                          ptopic_info->topic_len,
+                          ptopic_info->ptopic,
+                          ptopic_info->topic_len);
+/*
+            EXAMPLE_TRACE("Payload: '%.*s' (Length: %d)",
+                          ptopic_info->payload_len,
+                          ptopic_info->payload,
+                          ptopic_info->payload_len);
+*/
+            EXAMPLE_TRACE("----");
+            sub_counter++;
+            memset(&topic_msg, 0x0, sizeof(iotx_mqtt_topic_info_t));
+            topic_msg.payload = ptopic_info->payload;
+            topic_msg.qos = IOTX_MQTT_QOS1;
+            topic_msg.retain = 0;
+            topic_msg.dup = 0;
+            topic_msg.payload_len = ptopic_info->payload_len;
+            int rc =  IOT_MQTT_Publish(pclient, TOPIC_UPDATE, &topic_msg);
 
+            if (rc < 0) {
+            	EXAMPLE_TRACE("IOT_MQTT_Publish fail, ret=%d", rc);
+            } else {
+                pub_counter++;
+            }
+            EXAMPLE_TRACE("RECV=%d, SEND=%d", sub_counter, pub_counter);
+            break;
+        default:
+            EXAMPLE_TRACE("Should NOT arrive here.");
+            break;
+    }
+
+
+
+}
 int mqtt_client(void)
 {
     int rc, msg_len, cnt = 0;
@@ -179,24 +223,6 @@ int mqtt_client(void)
         return -1;
     }
 
-    /* Initialize topic information */
-    memset(&topic_msg, 0x0, sizeof(iotx_mqtt_topic_info_t));
-    strcpy(msg_pub, "update: hello! start!");
-
-    topic_msg.qos = IOTX_MQTT_QOS1;
-    topic_msg.retain = 0;
-    topic_msg.dup = 0;
-    topic_msg.payload = (void *)msg_pub;
-    topic_msg.payload_len = strlen(msg_pub);
-
-    rc = IOT_MQTT_Publish(pclient, TOPIC_UPDATE, &topic_msg);
-    if (rc < 0) {
-        IOT_MQTT_Destroy(&pclient);
-        EXAMPLE_TRACE("error occur when publish");
-        return -1;
-    }
-
-    EXAMPLE_TRACE("\n publish message: \n topic: %s\n payload: \%s\n rc = %d", TOPIC_UPDATE, topic_msg.payload, rc);
 
     /* Subscribe the specific topic */
     rc = IOT_MQTT_Subscribe(pclient, TOPIC_DATA, IOTX_MQTT_QOS1, _demo_message_arrive, NULL);
@@ -206,51 +232,21 @@ int mqtt_client(void)
         return -1;
     }
 
+    rc = IOT_MQTT_Subscribe(pclient, TOPIC_GET, IOTX_MQTT_QOS1, mqtt_sub_callback, NULL);
+    if (rc < 0) {
+         IOT_MQTT_Destroy(&pclient);
+         EXAMPLE_TRACE("IOT_MQTT_Subscribe() failed, rc = %d", rc);
+    }
     IOT_MQTT_Yield(pclient, 200);
 
     HAL_SleepMs(2000);
 
-    /* Initialize topic information */
-    memset(msg_pub, 0x0, 128);
-    strcpy(msg_pub, "data: hello! start!");
-    memset(&topic_msg, 0x0, sizeof(iotx_mqtt_topic_info_t));
-    topic_msg.qos = IOTX_MQTT_QOS1;
-    topic_msg.retain = 0;
-    topic_msg.dup = 0;
-    topic_msg.payload = (void *)msg_pub;
-    topic_msg.payload_len = strlen(msg_pub);
 
-    rc = IOT_MQTT_Publish(pclient, TOPIC_DATA, &topic_msg);
-    EXAMPLE_TRACE("\n publish message: \n topic: %s\n payload: \%s\n rc = %d", TOPIC_DATA, topic_msg.payload, rc);
-
-    IOT_MQTT_Yield(pclient, 200);
 
     do {
-        /* Generate topic message */
-        cnt++;
-        msg_len = snprintf(msg_pub, sizeof(msg_pub), "{\"attr_name\":\"temperature\",\"attr_value\":\"%d\"}", cnt);
-        if (msg_len < 0) {
-            EXAMPLE_TRACE("Error occur! Exit program");
-            return -1;
-        }
 
-        topic_msg.payload = (void *)msg_pub;
-        topic_msg.payload_len = msg_len;
-
-        rc = IOT_MQTT_Publish(pclient, TOPIC_DATA, &topic_msg);
-        if (rc < 0) {
-            EXAMPLE_TRACE("error occur when publish");
-        }
-        EXAMPLE_TRACE("packet-id=%lu, publish topic msg=%s", (uint32_t)rc, msg_pub);
-
-        /* handle the MQTT packet received from TCP or SSL connection */
         IOT_MQTT_Yield(pclient, 200);
-
-        /* infinite loop if running with 'loop' argument */
-//        if (user_argc >= 2 && !strcmp("loop", user_argv[1])) {
-            HAL_SleepMs(2000);
-            cnt = 0;
- //       }
+        cnt = 0;
 
     } while (cnt < 1);
 

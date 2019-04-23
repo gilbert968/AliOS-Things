@@ -12,7 +12,7 @@
 #include "iotx_mqtt_internal.h"
 #include "report.h"
 
-#define MQTT_DEFAULT_MSG_LEN 1280
+#define MQTT_DEFAULT_MSG_LEN 2048//1280
 
 static int iotx_mc_send_packet(iotx_mc_client_t *c, char *buf, int length, iotx_time_t *time);
 static int iotx_mc_read_packet(iotx_mc_client_t *c, iotx_time_t *timer, unsigned int *packet_type);
