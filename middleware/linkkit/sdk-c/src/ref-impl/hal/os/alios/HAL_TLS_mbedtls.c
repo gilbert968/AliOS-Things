@@ -23,11 +23,14 @@
 
 #define LOG_TAG "HAL_TLS"
 
-
+#ifdef _RX
+#define platform_info(...) LOGI(LOG_TAG, __VA_ARGS__)
+#define platform_err(...) LOGE(LOG_TAG, __VA_ARGS__)
+#else
 
 #define platform_info(format, ...) LOGI(LOG_TAG, format, ##__VA_ARGS__)
 #define platform_err(format, ...) LOGE(LOG_TAG, format, ##__VA_ARGS__)
-
+#endif
 #define SEND_TIMEOUT_SECONDS (10)
 
 #define DEBUG_LEVEL 10

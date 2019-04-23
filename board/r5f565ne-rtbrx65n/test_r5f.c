@@ -6,8 +6,9 @@
 #include <stdlib.h>
 #include "uart.h"
 #include "iodefine.h"
-#include <aos/aos.h>
+
 #include "aos\kernel.h"
+#include "aos\init.h"
 #include "rx_platform.h"           // Located in the FIT BSP module
 #include "r_sci_rx_if.h"        // The SCI module API interface file.
 #include "r_byteq_if.h"         // The BYTEQ module API interface file.
@@ -26,8 +27,8 @@
 //#include "alink_export.h"
 #include "config.h"
 #include "json_parser.h"
-#include "aos/network.h"
-#include "kvmgr.h"
+#include "network.h"
+#include "kv.h"
 #include <netmgr.h>
 //#include <accs.h>
 
@@ -35,6 +36,7 @@
 
 #ifdef AOS_ATCMD
 #include <atparser.h>
+#include "atparser_internal.h"
 #endif
 #ifdef AOS_AT_ADAPTER
 #include <at_adapter.h>
@@ -172,7 +174,7 @@ void init_atparser()
 	PORT2.PMR.BIT.B6 = 1;
 
     hal_wifi_register_module(&aos_wifi_module_mk3060);
-    hal_ota_register_module(&rx65n_ota_module);
+//    hal_ota_register_module(&rx65n_ota_module);
 
 	}
 
@@ -207,7 +209,10 @@ void init_task(void *arg)
     kinit.argc = 0;
 	kinit.argv = NULL;
 	kinit.cli_enable = 1;
-	aos_kernel_init(&kinit);
+	aos_components_init(&kinit);
+	krhino_task_sleep(RHINO_CONFIG_TICKS_PER_SECOND);
+
+    application_start(kinit.argc, kinit.argv);
 }
 
 
@@ -221,7 +226,7 @@ int main(void)
 	unsigned char log_example;
 
 	log_example = 3;
-
+	IOT_SetLogLevel(6);
 	BSP_Pre_Init();
     krhino_init();
 

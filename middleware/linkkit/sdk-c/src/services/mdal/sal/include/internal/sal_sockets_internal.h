@@ -35,8 +35,8 @@ extern "C" {
 
 #ifdef SAL_USE_AOS_HAL
 #if SAL_USE_DEBUG
-#define SAL_DEBUG(format, ...)  LOGD(SAL_TAG, format, ##__VA_ARGS__)
-#define SAL_ERROR(format, ...)  LOGE(SAL_TAG, format, ##__VA_ARGS__)
+#define SAL_DEBUG(...)  LOGD(SAL_TAG, __VA_ARGS__)
+#define SAL_ERROR(...)  LOGE(SAL_TAG, __VA_ARGS__)
 #define SAL_ASSERT(msg, assertion) do { if (!(assertion)) { \
             LOGE(SAL_TAG, msg);} \
         } while (0)
@@ -49,8 +49,8 @@ extern "C" {
 #define SAL_SNPRINTF snprintf
 #else
 #if SAL_USE_DEBUG
-#define SAL_DEBUG(format, ...)  log_debug(SAL_TAG, format, ##__VA_ARGS__)
-#define SAL_ERROR(format, ...)  log_err(SAL_TAG, format, ##__VA_ARGS__)
+#define SAL_DEBUG(...)  log_debug(SAL_TAG, __VA_ARGS__)
+#define SAL_ERROR(...)  log_err(SAL_TAG, __VA_ARGS__)
 #define SAL_ASSERT(msg, assertion) do { if (!(assertion)) { \
             log_err(SAL_TAG, msg);} \
         } while (0)

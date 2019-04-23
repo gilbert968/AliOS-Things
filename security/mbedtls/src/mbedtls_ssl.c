@@ -4,8 +4,12 @@
 #include "aos/kernel.h"
 #include <network/network.h>
 #include <sys/time.h>
-
+#if !defined(MBEDTLS_CONFIG_FILE)
 #include "mbedtls/config.h"
+#else
+#include MBEDTLS_CONFIG_FILE
+#endif
+
 #include "mbedtls/debug.h"
 #include "mbedtls/ssl.h"
 #include "mbedtls/x509_crt.h"

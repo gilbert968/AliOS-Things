@@ -47,3 +47,9 @@ projects/autogen/*
 .config
 .config.cmd
 .defconfig
+*.sub
+*.obj
+*.prefs
+projects/e2studio/RX65N_RTB/RTB_ALIOS210/debug/app/example/mqttapp/subdir.mk
+*.mk
+*.bak

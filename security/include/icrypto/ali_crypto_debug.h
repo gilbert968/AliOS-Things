@@ -32,19 +32,19 @@
 #endif /* PLATFORM_ANDROID */
 
 #else /* CONFIG_DBG_CRYPT */
-#define ALI_CRYPTO_DBG_E(_f, _a...)
-#define ALI_CRYPTO_DBG_I(_f, _a...)
+#define ALI_CRYPTO_DBG_E(_f, ...)
+#define ALI_CRYPTO_DBG_I(_f, ...)
 #endif  /* CONFIG_DBG_CRYPT */
 
-#define PRINT_RET(_ret, _f, ...)        \
+#define PRINT_RET(_ret, ...)        \
     do {                                \
-        ALI_CRYPTO_DBG_E(_f, ##__VA_ARGS__);  \
+        ALI_CRYPTO_DBG_E(#__VA_ARGS__);  \
         return (ali_crypto_result)_ret; \
     } while (0);
 
-#define GO_RET(_ret, _f, ...)             \
+#define GO_RET(_ret, ...)             \
     do {                                  \
-        ALI_CRYPTO_DBG_E(_f, ##__VA_ARGS__);    \
+        ALI_CRYPTO_DBG_E(__VA_ARGS__);    \
         result = (ali_crypto_result)_ret; \
         goto _OUT;                        \
     } while (0);

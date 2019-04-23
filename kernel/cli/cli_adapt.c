@@ -9,7 +9,9 @@
 #include "cli_conf.h"
 #include "cli_adapt.h"
 #include "cli_err.h"
-
+#ifdef _RX
+	extern uart_dev_t console;
+#endif
 int32_t cli_task_create(const char *name, void (*fn)(void *), void *arg,
                         uint32_t stack, uint32_t priority)
 {
@@ -31,9 +33,13 @@ int32_t cli_getchar(char *inbuf)
     int32_t  ret       = CLI_OK;
     uint32_t recv_size = 0;
 
+
+#ifdef _RX
+    uart_stdio = console;
+#else
     memset(&uart_stdio, 0, sizeof(uart_dev_t));
     uart_stdio.port = 0;
-
+#endif
     ret = hal_uart_recv_II(&uart_stdio, inbuf, 1, &recv_size, HAL_WAIT_FOREVER);
 
     if ((ret == 0) && (recv_size == 1)) {
@@ -47,8 +53,12 @@ int32_t cli_putstr(char *msg)
 {
     uart_dev_t uart_stdio;
 
+#ifdef _RX
+    uart_stdio = console;
+#else
     memset(&uart_stdio, 0, sizeof(uart_dev_t));
     uart_stdio.port = 0;
+#endif
 
     if (msg[0] != 0) {
 

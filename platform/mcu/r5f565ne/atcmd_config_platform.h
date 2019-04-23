@@ -5,7 +5,7 @@
 #ifndef _ATCMD_DEFINES_MK3060_H_
 #define _ATCMD_DEFINES_MK3060_H_
 
-#include <hal/soc/uart.h>
+#include <aos/hal/uart.h>
 
 /**
  * AT related platform-dependent things are here, including:

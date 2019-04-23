@@ -98,8 +98,8 @@ char * strdup(const char *s)
 int fputc(int ch, FILE *f)
 {
     /* Send data. */
-//	return  hal_uart_send(&console,&c,1,0xFFFF);
-    return aos_uart_send((uint8_t *)(&ch), 1, 1000);
+	return  hal_uart_send(&console,&ch,1,0xFFFF);
+//    return aos_uart_send((uint8_t *)(&ch), 1, 1000);
 }
 
 void SCI_PUT_CHAR(sci_hdl_t const ,long );
@@ -135,5 +135,11 @@ int listen(int sock, int backlog)
 {
 
 }
-
+//referred from rhono.c
+time_t gmtime(time_t *t)
+{
+}
+size_t strftime (char* ptr, size_t maxsize, const char* format,const struct tm* timeptr )
+{
+	}
 #endif

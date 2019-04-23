@@ -11,24 +11,30 @@
 #include "iot_export.h"
 #include "app_entry.h"
 
+#ifdef rx65n_rtb_demo
+#define PRODUCT_KEY             "a1I0E0DTnIT"
+#define DEVICE_NAME             "RTB_cloud_demo"
+#define DEVICE_SECRET           "wORI6Vpu4RzvjZQk8EdLK52VNSA0Qk26"
+#define PRODUCT_SECRET          "KY8Xv2dA2JMKJrOg"
+#else
 #define PRODUCT_KEY             "a1MZxOdcBnO"
 #define PRODUCT_SECRET          "h4I4dneEFp7EImTv"
 #define DEVICE_NAME             "test_01"
 #define DEVICE_SECRET           "t9GmMf2jb3LgWfXBaZD2r3aJrfVWBv56"
-
+#endif
 /* These are pre-defined topics */
-#define TOPIC_UPDATE            "/"PRODUCT_KEY"/"DEVICE_NAME"/update"
-#define TOPIC_ERROR             "/"PRODUCT_KEY"/"DEVICE_NAME"/update/error"
-#define TOPIC_GET               "/"PRODUCT_KEY"/"DEVICE_NAME"/get"
-#define TOPIC_DATA               "/"PRODUCT_KEY"/"DEVICE_NAME"/data"
+#define TOPIC_UPDATE            "/"PRODUCT_KEY"/"DEVICE_NAME"/user/update"
+#define TOPIC_ERROR             "/"PRODUCT_KEY"/"DEVICE_NAME"/user/update/error"
+#define TOPIC_GET               "/"PRODUCT_KEY"/"DEVICE_NAME"/user/get"
+#define TOPIC_DATA               "/"PRODUCT_KEY"/"DEVICE_NAME"/user/data"
 
 #define MQTT_MSGLEN             (1024)
 
-#define EXAMPLE_TRACE(fmt, ...)  \
+#define EXAMPLE_TRACE(...)  \
     do { \
-        HAL_Printf("%s|%03d :: ", __func__, __LINE__); \
-        HAL_Printf(fmt, ##__VA_ARGS__); \
-        HAL_Printf("%s", "\r\n"); \
+        printf("%s|%03d :: ", __func__, __LINE__); \
+        printf(__VA_ARGS__); \
+        printf("%s", "\r\n"); \
     } while(0)
 
 static int      user_argc;
@@ -241,10 +247,10 @@ int mqtt_client(void)
         IOT_MQTT_Yield(pclient, 200);
 
         /* infinite loop if running with 'loop' argument */
-        if (user_argc >= 2 && !strcmp("loop", user_argv[1])) {
+//        if (user_argc >= 2 && !strcmp("loop", user_argv[1])) {
             HAL_SleepMs(2000);
             cnt = 0;
-        }
+ //       }
 
     } while (cnt < 1);
 

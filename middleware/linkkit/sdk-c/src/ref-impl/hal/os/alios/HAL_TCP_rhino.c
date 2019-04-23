@@ -11,7 +11,20 @@
 #include "iot_import.h"
 
 extern uint64_t aliot_platform_time_left(uint64_t t_end, uint64_t t_now);
-
+#ifdef _RX
+#define PLATFORM_LOG_D(...) PLATFORM_LOG_D_help(__VA_ARGS__,"")
+#define PLATFORM_LOG_D_help(format, ...)                                \
+    do {                                                                   \
+        printf("D: %d %s() | " format "\n", __LINE__, __FUNCTION__, \
+               __VA_ARGS__);                                             \
+    } while (0);
+#define PLATFORM_LOG_E(...) PLATFORM_LOG_E_help(__VA_ARGS__,"")
+#define PLATFORM_LOG_E_help(format, ...)                                \
+    do {                                                                   \
+        printf("E: %d %s() | " format "\n", __LINE__, __FUNCTION__, \
+               __VA_ARGS__);                                             \
+    } while (0);
+#else
 #define PLATFORM_LOG_D(format, ...)                                \
     do {                                                                   \
         printf("D: %d %s() | " format "\n", __LINE__, __FUNCTION__, \
@@ -23,7 +36,7 @@ extern uint64_t aliot_platform_time_left(uint64_t t_end, uint64_t t_now);
         printf("E: %d %s() | " format "\n", __LINE__, __FUNCTION__, \
                ##__VA_ARGS__);                                             \
     } while (0);
-
+#endif
 #ifndef CONFIG_NO_TCPIP
 uintptr_t HAL_TCP_Establish(_IN_ const char *host, _IN_ uint16_t port)
 // intptr_t HAL_TCP_Establish(const char *host, uint16_t port)

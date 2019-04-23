@@ -6,8 +6,11 @@
 #include "kv_adapt.h"
 #include "kv_types.h"
 
+#ifdef _RX
+ kv_mgr_t g_kv_mgr;	// RX need it to calculate the position to write.
+#else
 static kv_mgr_t g_kv_mgr;
-
+#endif
 static void kv_gc_task(void *arg);
 
 kv_item_t *kv_item_traverse(item_func func, uint8_t blk_idx, const char *key);

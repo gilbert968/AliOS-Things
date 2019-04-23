@@ -23,8 +23,8 @@
 
 #define TAG            "atparser"
 
-#define atpsr_debug(format, ...)  LOGD(TAG, format, ##__VA_ARGS__)
-#define atpsr_err(format, ...)    LOGE(TAG, format, ##__VA_ARGS__)
+#define atpsr_debug(...)  LOGD(TAG, __VA_ARGS__)
+#define atpsr_err(...)    LOGE(TAG, __VA_ARGS__)
 
 static uint8_t    inited = 0;
 static uart_dev_t at_uart;

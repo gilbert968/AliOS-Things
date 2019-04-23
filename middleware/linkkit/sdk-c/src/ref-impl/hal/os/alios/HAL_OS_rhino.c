@@ -22,13 +22,20 @@
 #define DEFAULT_THREAD_PRI AOS_DEFAULT_APP_PRI
 
 #define _RHINO_SDK_DEMO__ 1
-
+#ifdef _RX
+#define PLATFORM_LOG(...) PLATFORM_LOG_help(__VA_ARGS__,"")
+#define PLATFORM_LOG_help(format, ...) \
+    do { \
+        HAL_Printf("RHINOSOCK %u %s() | "format"%s\n", __FILE__,__LINE__, \
+        __FUNCTION__, __VA_ARGS__); \
+    }while(0);
+#else
 #define PLATFORM_LOG(format, ...)                              \
     do {                                                             \
         HAL_Printf("Linux:%s:%d %s()| " format "\n", __FILE__, __LINE__, \
                    __FUNCTION__, ##__VA_ARGS__);                         \
     } while (0);
-
+#endif
 void *HAL_MutexCreate(void)
 {
     aos_mutex_t mutex;

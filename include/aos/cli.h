@@ -89,8 +89,12 @@ int aos_cli_unregister_commands(const struct cli_command *cmds, int num);
  *
  * @return 0 on success, otherwise failed
  */
+#ifdef _RX
+#define aos_cli_printf(...) aos_cli_printf_help(__VA_ARGS__,"")
+#define aos_cli_printf_help(fmt,...) printf("%s" fmt"%s", aos_cli_get_tag(), __VA_ARGS__)
+#else
 #define aos_cli_printf(fmt, ...) printf("%s" fmt, aos_cli_get_tag(), ##__VA_ARGS__)
-
+#endif
 #ifdef __cplusplus
 }
 #endif

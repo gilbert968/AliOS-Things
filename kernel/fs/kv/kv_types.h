@@ -20,8 +20,12 @@ typedef uint16_t kv_size_t;
 
 #ifdef _WIN32
 #define KVMAGR_PKD
-#else
+#else /_WIN32
+#ifdef _RX
+#define KVMAGR_PKD
+#else //_RX
 #define KVMAGR_PKD __attribute__((packed))
+#endif	//_RX
 #endif
 
 #ifdef _WIN32

@@ -44,7 +44,7 @@ static void wifi_service_event(input_event_t *event, void *priv_data)
     }
 
     if (!linkkit_started) {
-        aos_task_new("iotx_example",(task_fun)linkkit_main,(void *)&entry_paras,1024*6);
+        aos_task_new("iotx_example",(task_fun)linkkit_main,(void *)&entry_paras,10024*6);
         linkkit_started = 1;
     }
 }

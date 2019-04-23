@@ -1,7 +1,9 @@
 /**
  * Copyright (C) 2017 The YunOS IoT Project. All rights reserved.
  */
-
+#ifdef	_RX
+#define MBEDTLS_CONFIG_FILE "rx_mbedtls_config.h"
+#endif
 #if !defined(MBEDTLS_CONFIG_FILE)
 #include "mbedtls/config.h"
 #else
@@ -55,6 +57,20 @@
 #if defined(MBEDTLS_AES_ALT) || defined(MBEDTLS_PK_ALT) || defined(MBEDTLS_MD_ALT)
 #include "ali_crypto.h"
 #endif
+#ifdef	_RX
+#define MBEDTLS_ALT_PRINT(...) MBEDTLS_ALT_PRINT_help(__VA_ARGS__,"")
+#define MBEDTLS_ALT_PRINT_help(_f, ...)\
+        printf("%s %d: "_f"%s",  __FUNCTION__, __LINE__, __VA_ARGS__)
+#define MBEDTLS_ALT_ASSERT(_x)                          \
+    do {                                                \
+        if (!(_x)) {                                    \
+            printf("ASSERT FAILURE:\n");                \
+            printf("%s (%d): %s\n",                     \
+                    __FILE__, __LINE__, __FUNCTION__);  \
+            while (1) /* loop */;                       \
+        }                                               \
+    } while (0)
+#else
 
 #define MBEDTLS_ALT_PRINT(_f, _a ...)  \
         printf("%s %d: "_f,  __FUNCTION__, __LINE__, ##_a)
@@ -68,7 +84,7 @@
             while (1) /* loop */;                       \
         }                                               \
     } while (0)
-
+#endif
 #if defined(MBEDTLS_AES_ALT)
 /* Implementation that should never be optimized out by the compiler */
 static void mbedtls_zeroize( void *v, size_t n ) {
